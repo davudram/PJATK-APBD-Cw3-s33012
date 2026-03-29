@@ -16,7 +16,9 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie01_StudenciZWarszawy()
     {
-        throw Niezaimplementowano(nameof(Zadanie01_StudenciZWarszawy));
+        return DaneUczelni.Studenci
+            .Where(x => x.Miasto == "Warsaw")
+            .Select(x => $"{x.NumerIndeksu}, {x.Imie}, ${x.Nazwisko}, {x.Miasto}");
     }
 
     /// <summary>
@@ -30,7 +32,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie02_AdresyEmailStudentow()
     {
-        throw Niezaimplementowano(nameof(Zadanie02_AdresyEmailStudentow));
+        return DaneUczelni.Studenci
+            .Select(x => $"{x.Email}");
     }
 
     /// <summary>
@@ -45,7 +48,10 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie03_StudenciPosortowani()
     {
-        throw Niezaimplementowano(nameof(Zadanie03_StudenciPosortowani));
+        return DaneUczelni.Studenci
+            .OrderBy(x => x.Nazwisko)
+            .ThenBy(x => x.Imie)
+            .Select(x => $"{x.NumerIndeksu}, {x.Imie}, {x.Nazwisko}");
     }
 
     /// <summary>
@@ -60,7 +66,10 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie04_PierwszyPrzedmiotAnalityczny()
     {
-        throw Niezaimplementowano(nameof(Zadanie04_PierwszyPrzedmiotAnalityczny));
+        return DaneUczelni.Przedmioty
+            .Where(x => x.Kategoria == "Analytics")
+            .Select(x => $"{x.Nazwa}, {x.DataStartu}")
+            .Take(1);
     }
 
     /// <summary>
@@ -77,7 +86,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie05_CzyIstniejeNieaktywneZapisanie()
     {
-        throw Niezaimplementowano(nameof(Zadanie05_CzyIstniejeNieaktywneZapisanie));
+        return [DaneUczelni.Zapisy.
+            Any(x => x.CzyAktywny == false) ? "Tak" : "Nie"];
     }
 
     /// <summary>
@@ -92,7 +102,8 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie06_CzyWszyscyProwadzacyMajaKatedre()
     {
-        throw Niezaimplementowano(nameof(Zadanie06_CzyWszyscyProwadzacyMajaKatedre));
+        return [DaneUczelni.Prowadzacy
+            .All(x => x.Katedra != null) ? "Tak" : "Nie"];
     }
 
     /// <summary>
@@ -106,7 +117,9 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie07_LiczbaAktywnychZapisow()
     {
-        throw Niezaimplementowano(nameof(Zadanie07_LiczbaAktywnychZapisow));
+        return [DaneUczelni.Zapisy
+            .Count(x => x.CzyAktywny == true)
+            .ToString()];
     }
 
     /// <summary>
@@ -120,7 +133,10 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie08_UnikalneMiastaStudentow()
     {
-        throw Niezaimplementowano(nameof(Zadanie08_UnikalneMiastaStudentow));
+        return DaneUczelni.Studenci
+            .OrderBy(x => x.Miasto)
+            .Select(x => x.Miasto)
+            .Distinct();
     }
 
     /// <summary>
@@ -135,7 +151,10 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie09_TrzyNajnowszeZapisy()
     {
-        throw Niezaimplementowano(nameof(Zadanie09_TrzyNajnowszeZapisy));
+        return DaneUczelni.Zapisy
+            .OrderByDescending(x => x.DataZapisu)
+            .Select(x => $"{x.DataZapisu}, {x.StudentId}, {x.PrzedmiotId}")
+            .Take(3);
     }
 
     /// <summary>
@@ -151,7 +170,11 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie10_DrugaStronaPrzedmiotow()
     {
-        throw Niezaimplementowano(nameof(Zadanie10_DrugaStronaPrzedmiotow));
+        return DaneUczelni.Przedmioty
+            .OrderBy(x => x.Nazwa)
+            .Select(x => $"{x.Nazwa}, {x.Kategoria}")
+            .Skip(2)
+            .Take(2);
     }
 
     /// <summary>
@@ -166,7 +189,12 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie11_PolaczStudentowIZapisy()
     {
-        throw Niezaimplementowano(nameof(Zadanie11_PolaczStudentowIZapisy));
+        return DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy, 
+                s => s.Id, 
+                z => z.StudentId,
+                (s, z) => $"{s.Imie}, {s.Nazwisko}, {z.DataZapisu}");
     }
 
     /// <summary>
@@ -182,7 +210,17 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie12_ParyStudentPrzedmiot()
     {
-        throw Niezaimplementowano(nameof(Zadanie12_ParyStudentPrzedmiot));
+        return DaneUczelni.Zapisy
+            .Join(
+                DaneUczelni.Studenci, 
+                z => z.StudentId, 
+                s => s.Id, 
+                (z, s) => new {z, s})
+            .Join(
+                DaneUczelni.Przedmioty, 
+                zp => zp.z.PrzedmiotId, 
+                p => p.Id,
+                (zp, p) => $"{zp.s.Imie}, {zp.s.Nazwisko}, {p.Nazwa}");
     }
 
     /// <summary>
@@ -197,7 +235,14 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie13_GrupowanieZapisowWedlugPrzedmiotu()
     {
-        throw Niezaimplementowano(nameof(Zadanie13_GrupowanieZapisowWedlugPrzedmiotu));
+        return DaneUczelni.Zapisy
+            .Join(
+                DaneUczelni.Przedmioty,
+                z => z.PrzedmiotId,
+                p => p.Id,
+                (z, p) => new { z, p })
+            .GroupBy(x => x.p.Nazwa)
+            .Select(x => $"{x.Key}, {x.Count()}");
     }
 
     /// <summary>
@@ -214,7 +259,15 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie14_SredniaOcenaNaPrzedmiot()
     {
-        throw Niezaimplementowano(nameof(Zadanie14_SredniaOcenaNaPrzedmiot));
+        return DaneUczelni.Zapisy
+            .Join(
+                DaneUczelni.Przedmioty,
+                z => z.PrzedmiotId,
+                p => p.Id,
+                (z, p) => new { z, p })
+            .Where(x => x.z.OcenaKoncowa != null)
+            .GroupBy(x => x.p.Nazwa)
+            .Select(x => $"{x.Key}, {x.Average(arg => arg.z.OcenaKoncowa.Value)}");
     }
 
     /// <summary>
@@ -230,7 +283,13 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie15_ProwadzacyILiczbaPrzedmiotow()
     {
-        throw Niezaimplementowano(nameof(Zadanie15_ProwadzacyILiczbaPrzedmiotow));
+        return DaneUczelni.Prowadzacy
+            .GroupJoin(
+                DaneUczelni.Przedmioty,
+                pr => pr.Id,
+                p => p.ProwadzacyId,
+                (pr, p) => new { pr.Imie, pr.Nazwisko, Count = p.Count() })
+            .Select(x => $"{x.Imie}, {x.Nazwisko},  {x.Count}");
     }
 
     /// <summary>
@@ -247,7 +306,15 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Zadanie16_NajwyzszaOcenaKazdegoStudenta()
     {
-        throw Niezaimplementowano(nameof(Zadanie16_NajwyzszaOcenaKazdegoStudenta));
+        return DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new { s, z })
+            .Where(arg => arg.z.OcenaKoncowa != null)
+            .GroupBy(arg => new { arg.s.Imie, arg.s.Nazwisko })
+            .Select(x => $"{x.Key.Imie}, {x.Key.Nazwisko}, {x.Max(arg => arg.z.OcenaKoncowa.Value)}");
     }
 
     /// <summary>
@@ -265,7 +332,16 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie01_StudenciZWiecejNizJednymAktywnymPrzedmiotem()
     {
-        throw Niezaimplementowano(nameof(Wyzwanie01_StudenciZWiecejNizJednymAktywnymPrzedmiotem));
+        return DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new { s, z })
+            .Where(arg => arg.z.CzyAktywny == true)
+            .GroupBy(arg => new { arg.s.Imie, arg.s.Nazwisko })
+            .Where(arg => arg.Count() > 1)
+            .Select(arg => $"{arg.Key.Imie}, {arg.Key.Nazwisko}, {arg.Count()}");
     }
 
     /// <summary>
@@ -282,7 +358,16 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie02_PrzedmiotyStartujaceWKwietniuBezOcenKoncowych()
     {
-        throw Niezaimplementowano(nameof(Wyzwanie02_PrzedmiotyStartujaceWKwietniuBezOcenKoncowych));
+        return DaneUczelni.Przedmioty
+            .Where(arg => arg.DataStartu is { Month: 4, Year: 2026 })
+            .Join(
+                DaneUczelni.Zapisy,
+                p => p.Id,
+                z => z.PrzedmiotId,
+                (p, z) => new { p, z })
+            .GroupBy(arg => arg.p.Nazwa)
+            .Where(arg => arg.Count(x => x.z.OcenaKoncowa != null) == 0)
+            .Select(arg => $"{arg.Key}");
     }
 
     /// <summary>
@@ -300,7 +385,32 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach()
     {
-        throw Niezaimplementowano(nameof(Wyzwanie03_ProwadzacyISredniaOcenNaIchPrzedmiotach));
+        return DaneUczelni.Prowadzacy
+            .GroupJoin(
+                DaneUczelni.Przedmioty,
+                pr => pr.Id,
+                p => p.ProwadzacyId,
+                (pr, przedmioty) => new { pr, przedmioty })
+            .SelectMany(
+                x => x.przedmioty.DefaultIfEmpty(),
+                (x, p) => new { x.pr, p })
+            .GroupJoin(
+                DaneUczelni.Zapisy,
+                x => x.p == null ? -1 : x.p.Id, 
+                z => z.PrzedmiotId,
+                (x, zapisy) => new { x.pr, x.p, zapisy })
+            .SelectMany(
+                x => x.zapisy.DefaultIfEmpty(),
+                (x, z) => new { x.pr, z })
+            .Where(x => x.z != null && x.z.OcenaKoncowa != null)
+            .GroupBy(x => new { x.pr.Imie, x.pr.Nazwisko })
+            .Select(g => new
+            {
+                g.Key.Imie,
+                g.Key.Nazwisko,
+                Average = g.Average(x => (decimal?)x.z.OcenaKoncowa)
+            })
+            .Select(arg => $"{arg.Imie},  {arg.Nazwisko}, {arg.Average}");
     }
 
     /// <summary>
@@ -318,7 +428,16 @@ public sealed class ZadaniaLinq
     /// </summary>
     public IEnumerable<string> Wyzwanie04_MiastaILiczbaAktywnychZapisow()
     {
-        throw Niezaimplementowano(nameof(Wyzwanie04_MiastaILiczbaAktywnychZapisow));
+        return DaneUczelni.Studenci
+            .Join(
+                DaneUczelni.Zapisy,
+                s => s.Id,
+                z => z.StudentId,
+                (s, z) => new { s, z })
+            .Where(arg => arg.z.CzyAktywny == true)
+            .GroupBy(arg => arg.s.Miasto)
+            .OrderByDescending(arg => arg.Count())
+            .Select(arg => $"{arg.Key}: {arg.Count()}");
     }
 
     private static NotImplementedException Niezaimplementowano(string nazwaMetody)
